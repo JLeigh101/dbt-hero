@@ -1,0 +1,76 @@
+version: 2
+
+models:
+  - name: dim_listings_cleansed
+    description: Cleansed table with contains AirBNB listings.
+    columns:
+
+    - name: listing_id
+      description: Primary Key for the listing.
+      tests:
+        - unique
+        - not_null
+
+    - name: host_id
+      description: The host's id. References the hosts table.
+      tests:
+        - not_null
+        - relationships:
+            to: ref('dim_hosts_cleansed')
+            field: host_id
+
+    - name: room_type
+      description: Type of apartment / room
+      tests:
+        - accepted_values:
+            values: ['Entire home/apt', 'Private room', 'Shared room', 'Hotel room']
+    
+    - name: minimum_nights
+      description: '{{ doc("dim_listings_cleansed__minimum_nights") }}'
+      tests:
+        - positive_value
+
+  - name: dim_hosts_cleansed
+    description: Cleansed table which contains informations about AirBNB hosts.
+    columns:
+
+    - name: host_id
+      description: Primary Key for the table
+      tests: 
+        - unique
+        - not_null
+
+    - name: host_name
+      description: The name of the host of the listing
+      tests: 
+        - not_null
+      
+    - name: is_superhost
+      description: t or f depending on if host has achieved this rating
+      tests:
+        - accepted_values:
+            values: ['t', 'f']
+  
+  - name: dim_listings_w_hosts
+    tests:
+      - dbt_expectations.expect_table_row_count_to_equal_other_table:
+          compare_model: source('airbnb', 'listings')
+
+  - name: fct_reviews
+    columns:
+  
+    - name: listing_id
+      tests:
+        - relationships:
+            to: ref('dim_listings_cleansed')
+            field: listing_id
+ 
+    - name: reviewer_name
+      tests:
+        - not_null
+ 
+    - name: review_sentiment
+      tests:
+        - accepted_values:
+            values: ['positive', 'neutral', 'negative']
+

@@ -1,0 +1,17 @@
+version: 2
+
+exposures:
+  - name: Executive Dashboard
+    type: dashboard
+    maturity: low
+    url: https://c8a6c386.us1a.app.preset.io/superset/dashboard/8/?edit=true&native_filters_key=Is5rAUjcNoPiilpmCuA8Mh4zf3fQWPrP1pf9LGCeTImOWxjoZrZ7mGfoilXz_3l8
+    description: Executive Dashboard about Airbnb listings and hosts
+
+
+    depends_on:
+      - ref('dim_listings_w_hosts')
+      - ref('mart_fullmoon_reviews')
+
+    owner:
+      name: John
+      email: johnjleigh92@gmail.com
